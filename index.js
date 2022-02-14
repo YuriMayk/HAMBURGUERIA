@@ -14,7 +14,6 @@ const orders = []
 
 const checkIdUser = (request, response, next) => {
     const { id } = request.params
-
     const index = orders.findIndex(order => order.id === id)
 
     if (index < 0) {
@@ -25,17 +24,25 @@ const checkIdUser = (request, response, next) => {
     request.orderIndex = index
 
     next()
-
 }
 
+const declareTypeOfRoute = (request, response, next) => {
+    const method = request.method
+    const url = request.url
+    method.toUpperCase(method)
+    
+    next()
+
+    console.log(`[${method}], ${url}`)
+}
 
 // Here ends the middlewares.
 
 // Here start the routes.
 
-app.post("/order", (request, response) => {
+app.post("/order", declareTypeOfRoute, (request, response) => {
     const { order, clientName, price } = request.body
-    
+
     const newOrder = { id: uuid.v4(), order, clientName, price, status: "Em preparação" }
     orders.push(newOrder)
 
@@ -43,11 +50,11 @@ app.post("/order", (request, response) => {
 
 })
 
-app.get("/order", (request, response) => {
+app.get("/order", declareTypeOfRoute, (request, response) => {
     return response.json(orders)
 })
 
-app.put("/order/:id", checkIdUser, (request, response) => {
+app.put("/order/:id", checkIdUser, declareTypeOfRoute, (request, response) => {
     const { order, clientName, price } = request.body
     const id = request.id
     const index = request.orderIndex
@@ -61,36 +68,26 @@ app.put("/order/:id", checkIdUser, (request, response) => {
 
 })
 
-app.delete("/order/:id", checkIdUser, (request, response) => {
+app.delete("/order/:id", checkIdUser, declareTypeOfRoute, (request, response) => {
     const index = request.orderIndex
     orders.splice(index, 1)
-
     return response.status(204).json()
 })
 
-app.get("/order/:id", checkIdUser, (request, response) => {
+app.get("/order/:id", checkIdUser, declareTypeOfRoute, (request, response) => {
     const index = request.orderIndex
     return response.json(orders[index])
 })
 
-app.patch("/order/:id", checkIdUser, (request, response) => {
+app.patch("/order/:id", checkIdUser, declareTypeOfRoute, (request, response) => {
     const index = request.orderIndex
-
     orders[index].status = "pronto"
-
     return response.json(orders[index])
 
 })
 
 // Here ends the routes.
 
-
-
-
-
-
 app.listen(port, () => {
     console.log(`🚀 The server is on, at ${port} port🚪.`)
 })
-
-
