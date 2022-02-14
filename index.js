@@ -26,10 +26,10 @@ const checkIdUser = (request, response, next) => {
     next()
 }
 
-const declareTypeOfRoute = (request, response, next) => {
+const declareRouteInformation = (request, response, next) => {
     const method = request.method
     const url = request.url
-    method.toUpperCase(method)
+    method.toUpperCase()
     
     next()
 
@@ -40,7 +40,7 @@ const declareTypeOfRoute = (request, response, next) => {
 
 // Here start the routes.
 
-app.post("/order", declareTypeOfRoute, (request, response) => {
+app.post("/order", declareRouteInformation, (request, response) => {
     const { order, clientName, price } = request.body
 
     const newOrder = { id: uuid.v4(), order, clientName, price, status: "Em preparação" }
@@ -50,11 +50,11 @@ app.post("/order", declareTypeOfRoute, (request, response) => {
 
 })
 
-app.get("/order", declareTypeOfRoute, (request, response) => {
+app.get("/order", declareRouteInformation, (request, response) => {
     return response.json(orders)
 })
 
-app.put("/order/:id", checkIdUser, declareTypeOfRoute, (request, response) => {
+app.put("/order/:id", checkIdUser, declareRouteInformation, (request, response) => {
     const { order, clientName, price } = request.body
     const id = request.id
     const index = request.orderIndex
@@ -68,18 +68,18 @@ app.put("/order/:id", checkIdUser, declareTypeOfRoute, (request, response) => {
 
 })
 
-app.delete("/order/:id", checkIdUser, declareTypeOfRoute, (request, response) => {
+app.delete("/order/:id", checkIdUser, declareRouteInformation, (request, response) => {
     const index = request.orderIndex
     orders.splice(index, 1)
     return response.status(204).json()
 })
 
-app.get("/order/:id", checkIdUser, declareTypeOfRoute, (request, response) => {
+app.get("/order/:id", checkIdUser, declareRouteInformation, (request, response) => {
     const index = request.orderIndex
     return response.json(orders[index])
 })
 
-app.patch("/order/:id", checkIdUser, declareTypeOfRoute, (request, response) => {
+app.patch("/order/:id", checkIdUser, declareRouteInformation, (request, response) => {
     const index = request.orderIndex
     orders[index].status = "pronto"
     return response.json(orders[index])
